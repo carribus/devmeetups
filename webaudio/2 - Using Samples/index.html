@@ -2,10 +2,6 @@
     <body>
         <h1>Uber-Useless&trade; Mixer Example</h1>
         <div>
-            <input type="checkbox" onclick="play('ambient')">Ambient</input>
-            <input type="range" min="0" max="100" value="50" oninput="setVolume('ambient', this.value)" />
-        </div>
-        <div>
             <input type="checkbox" onclick="play('sequence')">Sequence</input>
             <input type="range" min="0" max="100" value="50" oninput="setVolume('sequence', this.value)" />
         </div>
@@ -26,7 +22,6 @@
         synth: { file: "sound/synth-loop.wav", volume: 50.0 },
         beat: { file: "sound/beat-loop.wav", volume: 50.0 },
         sequence: { file: "sound/sequence-loop.wav", volume: 50.0 },
-        ambient: { file: "sound/ambient-loop.wav", volume: 50.0 },
     };
     let context = 'AudioContext' in window ? new AudioContext() : new webkitAudioContext();
     let source;
