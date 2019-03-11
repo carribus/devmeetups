@@ -19,12 +19,13 @@
     </body>
 
     <script>
+    // create a Web Audio AudioContext
     let context = new (window.AudioContext || window.webkitAudioContext)();
-    let isPlaying = false;
     let oscillator, gain;
 
     if (context) {
         console.log("Web Audio initialised");
+        // create a Gain node to control volume
         gain = context.createGain();
         gain.gain.value = 0.5;
         gain.connect(context.destination);
