@@ -28,7 +28,7 @@
         sequence: { file: "sound/sequence-loop.wav", volume: 50.0 },
         ambient: { file: "sound/ambient-loop.wav", volume: 50.0 },
     };
-    let context = new AudioContext();
+    let context = 'AudioContext' in window ? new AudioContext() : new webkitAudioContext();
     let source;
     let isPlaying = false;
 

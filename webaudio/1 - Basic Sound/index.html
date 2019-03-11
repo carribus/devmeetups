@@ -18,7 +18,7 @@
     </body>
 
     <script>
-    let context = new AudioContext();
+    let context = 'AudioContext' in window ? new AudioContext() : new webkitAudioContext();
     let isPlaying = false;
     let oscillator, gain;
 
