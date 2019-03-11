@@ -1,0 +1,98 @@
+<html>
+    <body>
+        <h1>Uber-Useless&trade; Mixer Example</h1>
+        <div>
+            <input type="checkbox" onclick="play('ambient')">Ambient</input>
+            <input type="range" min="0" max="100" value="50" oninput="setVolume('ambient', this.value)" />
+        </div>
+        <div>
+            <input type="checkbox" onclick="play('sequence')">Sequence</input>
+            <input type="range" min="0" max="100" value="50" oninput="setVolume('sequence', this.value)" />
+        </div>
+        <div>
+            <input type="checkbox" onclick="play('synth')">Synth</input>
+            <input type="range" min="0" max="100" value="50" oninput="setVolume('synth', this.value)" />
+        </div>
+        <div>
+            <input type="checkbox" onclick="play('beat')">Beat</input>
+            <input type="range" min="0" max="100" value="50" oninput="setVolume('beat', this.value)" />
+        </div>
+        <div>
+            <input type="checkbox" onclick="play('*')">All of 'em</input>
+        </div>
+    </body>
+    <script>
+    let audioSamples = {
+        synth: { file: "sound/synth-loop.wav", volume: 50.0 },
+        beat: { file: "sound/beat-loop.wav", volume: 50.0 },
+        sequence: { file: "sound/sequence-loop.wav", volume: 50.0 },
+        ambient: { file: "sound/ambient-loop.wav", volume: 50.0 },
+    };
+    let context = new AudioContext();
+    let source;
+    let isPlaying = false;
+
+    const loadSample = (sample) => {
+        fetch(sample.file)
+            .then((resp) => {
+                return resp.arrayBuffer();
+            })
+            .then((data) => {
+                context.decodeAudioData(data, (data) => {
+                    sample.data = data;
+                });
+            })
+    }
+
+    if (context) {
+        console.log("Web Audio initialised");
+        for (sample in audioSamples) {
+            loadSample(audioSamples[sample]);
+        }
+    } else {
+        console.error("Web Audio API is unavailable. Stop using this shitty browser...");
+    }
+
+    function play(name) {
+        switch (name) {
+            case "*":
+                for (let sample in audioSamples) {
+                    play(sample);
+                }
+                break;
+
+            default:
+                let sample = audioSamples[name];
+                if (sample) {
+                    if (!sample.audioNode) {
+                        let source = context.createBufferSource();
+                        let gainNode = context.createGain();
+
+                        source.buffer = sample.data;
+                        source.loop = true;
+                        source.connect(gainNode);
+                        gainNode.connect(context.destination);
+                        gainNode.gain.value = sample.volume/100;
+                        source.start();
+                        sample.audioNode = source;
+                        sample.gainNode = gainNode;
+                    } else {
+                        sample.audioNode.stop();
+                        sample.audioNode.disconnect();
+                        sample.audioNode = null;
+                    }
+                }
+                break;
+        }
+    }
+
+    function setVolume(name, gainValue) {
+        console.log(gainValue);
+        let sample = audioSamples[name];
+        if (sample && sample.gainNode) {
+            sample.volume = parseFloat(gainValue);
+            sample.gainNode.gain.value = sample.volume/100;
+        }
+    }
+    </script>
+</html>

@@ -1,0 +1,63 @@
+<html>
+    <body>
+        <button onclick="play()">Play/Stop</button>
+        <div>
+            <input type="range" id="frequency" min="0" max="8000" value="440">
+            <label id="lblfreq" for="frequency">Frequency (440 Hz)</label>
+        </div>
+        <div>
+            <input type="range" id="volume" min="0" max="100" value="50">
+            <label id="lblgain" for="volume">Volume (50)</label>
+        </div>
+        <div>
+            <button id="sine" onclick="changeWaveShape('sine')">Sine</button>
+            <button id="sawtooth" onclick="changeWaveShape('sawtooth')">Sawtooth</button>
+            <button id="square" onclick="changeWaveShape('square')">Square</button>
+            <button id="triangle" onclick="changeWaveShape('triangle')">Triangle</button>
+        </div>
+    </body>
+
+    <script>
+    let context = new AudioContext();
+    let isPlaying = false;
+    let oscillator, gain;
+
+    if (context) {
+        console.log("Web Audio initialised");
+        gain = context.createGain();
+        gain.gain.value = 0.5;
+        gain.connect(context.destination);
+    } else {
+        console.error("Web Audio API is unavailable. Stop using this shitty browser...");
+    }
+
+    function changeWaveShape(e) {
+        oscillator.type = e;
+    }
+
+    function play() {
+        if (isPlaying) {
+            oscillator.stop();
+            oscillator.disconnect();
+        } else {
+            oscillator = context.createOscillator();
+            oscillator.type = 'sine';
+            oscillator.frequency.value = parseInt(document.getElementById("frequency").value);
+
+            oscillator.connect(gain);
+
+            oscillator.start();
+        }
+        isPlaying ^= true;
+    }
+
+    document.getElementById("frequency").addEventListener("input", (e) => {
+        oscillator.frequency.value = parseInt(e.target.value);
+        document.getElementById("lblfreq").innerHTML = `Frequency (${e.target.value} Hz)`;
+    });
+    document.getElementById("volume").addEventListener("input", (e) => {
+        gain.gain.value = parseFloat(e.target.value)/100;
+        document.getElementById("lblgain").innerHTML = `Volume (${e.target.value})`;
+    });
+    </script>
+</html>
