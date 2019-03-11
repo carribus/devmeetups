@@ -1,5 +1,6 @@
 <html>
     <body>
+        <h1>Basic sounds with an oscillator</h1>
         <button onclick="play()">Play/Stop</button>
         <div>
             <input type="range" id="frequency" min="0" max="8000" value="440">
@@ -18,7 +19,7 @@
     </body>
 
     <script>
-    let context = 'AudioContext' in window ? new AudioContext() : new webkitAudioContext();
+    let context = new (window.AudioContext || window.webkitAudioContext)();
     let isPlaying = false;
     let oscillator, gain;
 
