@@ -22,6 +22,7 @@
     // create a Web Audio AudioContext
     let context = new (window.AudioContext || window.webkitAudioContext)();
     let oscillator, gain;
+    let isPlaying = false;
 
     if (context) {
         console.log("Web Audio initialised");
